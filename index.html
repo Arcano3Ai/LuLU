@@ -28,6 +28,7 @@
   <!-- Favicon / App Icon -->
   <link rel="icon" type="image/jpeg" href="assets/images/lulu-emblema-luxury.jpg">
   <link rel="apple-touch-icon" href="assets/images/lulu-emblema-luxury.jpg">
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -241,6 +242,7 @@
       border: 1px solid rgba(255, 255, 255, 0.08);
       transition: var(--transition-base);
       color: var(--text-white);
+      outline: none;
     }
     .action-btn:hover {
       background: rgba(212, 163, 115, 0.14);
@@ -418,7 +420,7 @@
       align-items: center;
     }
     
-    /* VIDEO BACKGROUND INMERSIVO CON OVERLAY DEGRADADO */
+    /* VIDEO BACKGROUND INMERSIVO */
     .hero-video-bg {
       position: absolute;
       top: 50%;
@@ -494,7 +496,7 @@
       flex-wrap: wrap;
     }
 
-    /* Tarjeta Cinemática Interactiva del Hero */
+    /* Tarjeta Cinemática Interactiva del Hero - PURO VIDEO SIN BANNER */
     .hero-visual-frame {
       position: relative;
       border-radius: var(--radius-lg);
@@ -506,35 +508,9 @@
     .hero-player-video {
       width: 100%;
       height: 100%;
-      max-height: 480px;
+      max-height: 520px;
       object-fit: cover;
       display: block;
-    }
-    .hero-visual-tag {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      right: 20px;
-      padding: 14px 20px;
-      background: rgba(13, 13, 15, 0.85);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(212, 163, 115, 0.3);
-      border-radius: var(--radius-md);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 4;
-    }
-    .hero-visual-tag span {
-      font-size: 0.74rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--rose-gold-light);
-    }
-    .hero-visual-tag strong {
-      font-family: var(--font-serif);
-      font-size: 0.92rem;
-      color: var(--text-white);
     }
     
     /* BOTONES */
@@ -784,7 +760,6 @@
       border-top: 1px solid rgba(255, 255, 255, 0.03);
     }
 
-    /* FILTROS INTERACTIVOS CSS PURO */
     .catalog-filter-bar {
       display: flex;
       justify-content: center;
@@ -1080,7 +1055,7 @@
       color: var(--text-muted);
     }
 
-    /* 7. DIAGNÓSTICO CAPILAR EXPRESS (PESTAÑAS CSS) */
+    /* 7. DIAGNÓSTICO CAPILAR EXPRESS */
     .diagnosis-section {
       padding: 90px 0;
       background: #0B0B0D;
@@ -1539,6 +1514,11 @@
 </head>
 <body>
 
+  <!-- ELEMENTO DE AUDIO AMBIENTAL DE FONDO -->
+  <audio id="bg-audio" loop preload="auto">
+    <source src="assets/audio/Afternoon_at_the_Atelier.mp3" type="audio/mpeg">
+  </audio>
+
   <!-- CONTROLES PURO CSS PARA FILTROS Y CARRITO -->
   <input type="checkbox" id="cart-drawer-toggle" class="drawer-checkbox">
   <input type="checkbox" id="menu-toggle" class="menu-checkbox">
@@ -1611,6 +1591,10 @@
       </nav>
 
       <div class="header-actions">
+        <!-- Control de Música de Fondo -->
+        <button id="music-btn" class="action-btn" aria-label="Música Ambiental de Salón" title="Música Ambiental de Salón">
+          <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+        </button>
         <button class="action-btn" aria-label="Buscar producto" title="Buscar">
           <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
         </button>
@@ -1631,7 +1615,7 @@
   </header>
 
   <main>
-    <!-- 3. HERO CINEMÁTICO CON VIDEO DE INTRO AUTOPLAY -->
+    <!-- 3. HERO CINEMÁTICO CON VIDEO DE INTRO -->
     <section class="hero" aria-labelledby="hero-title-id">
       <!-- Video Cinemático en Bucle de Fondo -->
       <video class="hero-video-bg" autoplay muted loop playsinline poster="assets/images/hero-preview.jpg">
@@ -1654,15 +1638,11 @@
           </div>
         </div>
 
-        <!-- Video Cinemático en Tarjeta Editorial -->
+        <!-- Video Cinemático en Tarjeta Editorial - PURO VIDEO LIMPIO SIN BANNERS ENCIMA -->
         <div class="hero-visual-frame">
           <video class="hero-player-video" autoplay muted loop playsinline controls poster="assets/images/hero-preview.jpg">
             <source src="assets/videos/lulu-hero-intro.mp4" type="video/mp4">
           </video>
-          <div class="hero-visual-tag">
-            <span>Atmósfera de Salón</span>
-            <strong>Saltillo, Coahuila</strong>
-          </div>
         </div>
       </div>
     </section>
@@ -1759,7 +1739,7 @@
       </div>
     </section>
 
-    <!-- 6. CATÁLOGO DE PRODUCTOS (10 PRODUCTOS) -->
+    <!-- 6. CATÁLOGO DE PRODUCTOS (10 FÓRMULAS COMPLETAS) -->
     <section id="catalogo" class="products-section" aria-labelledby="prod-heading">
       <div class="container">
         
@@ -2059,7 +2039,7 @@
       </div>
     </div>
 
-    <!-- 7. DIAGNÓSTICO CAPILAR EXPRESS INTERACTIVO (PURO CSS) -->
+    <!-- 7. DIAGNÓSTICO CAPILAR EXPRESS INTERACTIVO -->
     <section id="diagnostico" class="diagnosis-section" aria-labelledby="diag-heading">
       <div class="container">
         <header class="section-header">
@@ -2067,7 +2047,6 @@
           <h2 id="diag-heading" class="section-title">Encuentra Tu Ritual Ideal</h2>
         </header>
 
-        <!-- Tabs CSS de Diagnóstico -->
         <input type="radio" name="diag-group" id="diag-tab1" class="filter-radio" checked>
         <input type="radio" name="diag-group" id="diag-tab2" class="filter-radio">
         <input type="radio" name="diag-group" id="diag-tab3" class="filter-radio">
@@ -2302,6 +2281,44 @@
       </div>
     </div>
   </footer>
+
+  <!-- SCRIPT LIGERO PARA AUDIO AMBIENTAL AUTOMÁTICO / BOTÓN -->
+  <script>
+    const bgAudio = document.getElementById('bg-audio');
+    const musicBtn = document.getElementById('music-btn');
+    
+    // Intenta reproducir de inmediato
+    if (bgAudio) {
+      bgAudio.volume = 0.45;
+      const playPromise = bgAudio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Si el navegador requiere interacción previa, arranca al primer clic
+          const startAudioOnce = () => {
+            bgAudio.play().catch(() => {});
+            document.removeEventListener('click', startAudioOnce);
+          };
+          document.addEventListener('click', startAudioOnce, { once: true });
+        });
+      }
+    }
+
+    // Botón manual de Play/Pausa en el Header
+    if (musicBtn && bgAudio) {
+      musicBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (bgAudio.paused) {
+          bgAudio.play();
+          musicBtn.style.color = '#F3D1C1';
+          musicBtn.style.borderColor = '#D4A373';
+        } else {
+          bgAudio.pause();
+          musicBtn.style.color = '#A0A0A5';
+          musicBtn.style.borderColor = 'rgba(255,255,255,0.08)';
+        }
+      });
+    }
+  </script>
 
 </body>
 </html>
