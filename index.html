@@ -2,9 +2,17 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Lulú Hair Salon | Alta Alquimia Capilar & Tienda Oficial Saltillo</title>
   <meta name="description" content="Tienda online oficial y fórmulas profesionales de lujo desarrolladas por Lulú Hair Salon en Saltillo, Coahuila. Tratamientos capilares, coloración y cuidado sublime.">
+  
+  <!-- Mobile / iOS & Android Optimizations -->
+  <meta name="theme-color" content="#0D0D0F">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Lulú Hair Salon">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
   
   <!-- Open Graph / WhatsApp Preview Meta Tags -->
   <meta property="og:type" content="website">
@@ -511,6 +519,43 @@
       max-height: 520px;
       object-fit: cover;
       display: block;
+    }
+    .hero-audio-badge {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: rgba(13, 13, 15, 0.78);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--rose-gold-border);
+      border-radius: var(--radius-full);
+      color: var(--rose-gold-light);
+      font-size: 0.74rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      z-index: 5;
+      transition: var(--transition-base);
+      outline: none;
+    }
+    .hero-audio-badge:hover {
+      background: rgba(212, 163, 115, 0.22);
+      border-color: var(--rose-gold-light);
+      transform: scale(1.03);
+    }
+    .hero-audio-badge svg {
+      width: 15px;
+      height: 15px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
     
     /* BOTONES */
@@ -1514,9 +1559,9 @@
 </head>
 <body>
 
-  <!-- ELEMENTO DE AUDIO AMBIENTAL DE FONDO -->
+  <!-- ELEMENTO DE AUDIO AMBIENTAL DE FONDO (CANCIÓN OFICIAL V2) -->
   <audio id="bg-audio" loop preload="auto">
-    <source src="assets/audio/Afternoon_at_the_Atelier.mp3" type="audio/mpeg">
+    <source src="assets/audio/lulu-hair-salon-v2.mp3" type="audio/mpeg">
   </audio>
 
   <!-- CONTROLES PURO CSS PARA FILTROS Y CARRITO -->
@@ -1638,11 +1683,15 @@
           </div>
         </div>
 
-        <!-- Video Cinemático en Tarjeta Editorial - PURO VIDEO LIMPIO SIN BANNERS ENCIMA -->
+        <!-- Video Cinemático en Tarjeta Editorial - VIDEO CON AUDIO AUTOMÁTICO -->
         <div class="hero-visual-frame">
-          <video class="hero-player-video" autoplay muted loop playsinline controls poster="assets/images/hero-preview.jpg">
+          <video id="hero-player-video" class="hero-player-video" autoplay loop playsinline controls poster="assets/images/hero-preview.jpg">
             <source src="assets/videos/lulu-hero-intro.mp4" type="video/mp4">
           </video>
+          <button id="hero-audio-btn" class="hero-audio-badge" aria-label="Control de audio del video" title="Activar/Desactivar Sonido">
+            <svg id="hero-audio-icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+            <span id="hero-audio-text">Audio Activo</span>
+          </button>
         </div>
       </div>
     </section>
@@ -2282,42 +2331,134 @@
     </div>
   </footer>
 
-  <!-- SCRIPT LIGERO PARA AUDIO AMBIENTAL AUTOMÁTICO / BOTÓN -->
+  <!-- SCRIPT INTEGRAL: AUDIO DEL VIDEO EN HERO & MÚSICA AMBIENTAL V2 -->
   <script>
-    const bgAudio = document.getElementById('bg-audio');
-    const musicBtn = document.getElementById('music-btn');
-    
-    // Intenta reproducir de inmediato
-    if (bgAudio) {
-      bgAudio.volume = 0.45;
-      const playPromise = bgAudio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // Si el navegador requiere interacción previa, arranca al primer clic
-          const startAudioOnce = () => {
-            bgAudio.play().catch(() => {});
-            document.removeEventListener('click', startAudioOnce);
-          };
-          document.addEventListener('click', startAudioOnce, { once: true });
+    document.addEventListener('DOMContentLoaded', () => {
+      const heroVideo = document.getElementById('hero-player-video');
+      const heroAudioBtn = document.getElementById('hero-audio-btn');
+      const heroAudioIcon = document.getElementById('hero-audio-icon');
+      const heroAudioText = document.getElementById('hero-audio-text');
+      const bgAudio = document.getElementById('bg-audio');
+      const musicBtn = document.getElementById('music-btn');
+
+      // Iconos SVG para el botón de audio del video
+      const soundOnSvg = '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>';
+      const soundOffSvg = '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line>';
+
+      function updateHeroAudioUI(isMuted) {
+        if (!heroAudioBtn) return;
+        if (isMuted) {
+          if (heroAudioIcon) heroAudioIcon.innerHTML = soundOffSvg;
+          if (heroAudioText) heroAudioText.textContent = 'Activar Sonido';
+          heroAudioBtn.style.background = 'rgba(13, 13, 15, 0.88)';
+          heroAudioBtn.style.color = 'var(--text-muted)';
+          heroAudioBtn.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+        } else {
+          if (heroAudioIcon) heroAudioIcon.innerHTML = soundOnSvg;
+          if (heroAudioText) heroAudioText.textContent = 'Audio Encendido';
+          heroAudioBtn.style.background = 'rgba(212, 163, 115, 0.25)';
+          heroAudioBtn.style.color = 'var(--rose-gold-light)';
+          heroAudioBtn.style.borderColor = 'var(--rose-gold-light)';
+        }
+      }
+
+      // GESTIÓN DEL VIDEO DEL HERO CON AUDIO AUTOMÁTICO
+      if (heroVideo) {
+        heroVideo.volume = 0.85;
+        heroVideo.muted = false; // Intento inicial: audio encendido directamente
+
+        const videoPromise = heroVideo.play();
+        if (videoPromise !== undefined) {
+          videoPromise.then(() => {
+            // Autoplay con audio concedido por el navegador
+            updateHeroAudioUI(false);
+          }).catch(() => {
+            // Si las políticas de seguridad del navegador bloquean unmuted autoplay:
+            // 1. Iniciamos muted para que empiece de inmediato el video visualmente
+            heroVideo.muted = true;
+            heroVideo.play().catch(() => {});
+            updateHeroAudioUI(true);
+
+            // 2. Desmuteamos y encendemos el audio con el primer toque/clic/scroll del usuario
+            const enableAudioOnUserGesture = () => {
+              heroVideo.muted = false;
+              heroVideo.volume = 0.85;
+              heroVideo.play().catch(() => {});
+              updateHeroAudioUI(false);
+              cleanupGestureListeners();
+            };
+
+            const gestureEvents = ['click', 'touchstart', 'pointerdown', 'keydown', 'scroll'];
+            const cleanupGestureListeners = () => {
+              gestureEvents.forEach(evt => {
+                window.removeEventListener(evt, enableAudioOnUserGesture, { capture: true });
+              });
+            };
+
+            gestureEvents.forEach(evt => {
+              window.addEventListener(evt, enableAudioOnUserGesture, { capture: true, once: true });
+            });
+          });
+        }
+
+        // Control manual desde el badge del video
+        if (heroAudioBtn) {
+          heroAudioBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            heroVideo.muted = !heroVideo.muted;
+            if (!heroVideo.muted) {
+              heroVideo.volume = 0.85;
+              heroVideo.play().catch(() => {});
+              if (bgAudio && !bgAudio.paused) {
+                bgAudio.pause();
+                updateMusicBtnUI(false);
+              }
+            }
+            updateHeroAudioUI(heroVideo.muted);
+          });
+        }
+
+        // Listener nativo si el usuario ajusta volumen en los controles de video
+        heroVideo.addEventListener('volumechange', () => {
+          updateHeroAudioUI(heroVideo.muted || heroVideo.volume === 0);
         });
       }
-    }
 
-    // Botón manual de Play/Pausa en el Header
-    if (musicBtn && bgAudio) {
-      musicBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (bgAudio.paused) {
-          bgAudio.play();
+      // GESTIÓN DE LA MÚSICA AMBIENTAL DE FONDO (CANCIÓN OFICIAL V2)
+      function updateMusicBtnUI(isPlaying) {
+        if (!musicBtn) return;
+        if (isPlaying) {
           musicBtn.style.color = '#F3D1C1';
           musicBtn.style.borderColor = '#D4A373';
+          musicBtn.style.background = 'rgba(212, 163, 115, 0.16)';
         } else {
-          bgAudio.pause();
           musicBtn.style.color = '#A0A0A5';
           musicBtn.style.borderColor = 'rgba(255,255,255,0.08)';
+          musicBtn.style.background = 'transparent';
         }
-      });
-    }
+      }
+
+      if (musicBtn && bgAudio) {
+        bgAudio.volume = 0.40;
+
+        musicBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (bgAudio.paused) {
+            // Si encendemos la música de fondo, muteamos el video para evitar superposición
+            if (heroVideo && !heroVideo.paused && !heroVideo.muted) {
+              heroVideo.muted = true;
+              updateHeroAudioUI(true);
+            }
+            bgAudio.play().then(() => {
+              updateMusicBtnUI(true);
+            }).catch(() => {});
+          } else {
+            bgAudio.pause();
+            updateMusicBtnUI(false);
+          }
+        });
+      }
+    });
   </script>
 
 </body>
